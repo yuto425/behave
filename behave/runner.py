@@ -675,7 +675,13 @@ class Runner(ModelRunner):
     def run_with_paths(self):
         self.context = Context(self)
         self.load_hooks()
-        self.load_step_definitions()
+        extra_step_paths = []
+        for path in self.config.paths[1:]:
+            absolute_path = os.path.abspath(path)
+            step_path = os.path.join(absolute_path, 'steps')
+            if os.path.isdir(step_path):
+                extra_step_paths.append(step_path)
+        self.load_step_definitions(extra_step_paths=extra_step_paths)
 
         # -- ENSURE: context.execute_steps() works in weird cases (hooks, ...)
         # self.setup_capture()
